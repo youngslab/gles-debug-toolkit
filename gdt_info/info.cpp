@@ -17,19 +17,26 @@ std::vector<std::string> split(const char *str) {
 
 int main() {
   auto display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  if (display = EGL_NO_DISPLAY) {
+  if (display == EGL_NO_DISPLAY) {
+    spdlog::error("failed to get display");
     return -1;
   }
   auto success = eglInitialize(display, nullptr, nullptr);
+  if (!success) {
+    spdlog::error("failed to init egl");
+    return -1;
+  }
 
-  spdlog::info("** gdt-info **");
+  spdlog::info("GLES Debug Toolkit - Information");
   spdlog::info("--------------");
-  spdlog::info("  extensions  ");
+  spdlog::info("Version: {} - {}", eglQueryString(display, EGL_CLIENT_APIS),
+	       eglQueryString(display, EGL_VERSION));
+
   spdlog::info("--------------");
+  spdlog::info("Extensions:  ");
   auto exts = split(eglQueryString(display, EGL_EXTENSIONS));
   for (auto ext : exts) {
-    spdlog::info(" - {}", ext);
+    spdlog::info("{}", ext);
   }
-  spdlog::info("--------------");
 }
 
